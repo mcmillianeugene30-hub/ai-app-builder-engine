@@ -20,6 +20,7 @@ import {
   DEFAULT_SIGNALING_SERVERS 
 } from '@/lib/collaboration'
 import type { CollaborationState, PeerInfo } from '@/types/collaboration'
+import type { Project } from '@/types/project'
 
 export function CollaborationPanel({ project, isVisible }: { project: Project | null; isVisible: boolean }) {
   const [manager, setManager] = useState<CollaborationManager | null>(null)
