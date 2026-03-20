@@ -56,6 +56,7 @@ export async function exportAsZip(
     
     return {
       success: true,
+      logs: [] as string[],
       blob,
       filename: `${project.name}.zip`,
       error: null,
@@ -63,6 +64,7 @@ export async function exportAsZip(
   } catch (error) {
     return {
       success: false,
+      logs: [] as string[],
       blob: null,
       filename: `${project.name}.zip`,
       error: error instanceof Error ? error.message : 'Failed to create ZIP',
@@ -89,6 +91,7 @@ export async function deployToVercel(
   if (!token) {
     return {
       success: false,
+      logs: [] as string[],
       deploymentUrl: null,
       projectUrl: null,
       error: 'Vercel token not configured',
@@ -123,6 +126,7 @@ export async function deployToVercel(
     
     return {
       success: true,
+      logs: [] as string[],
       deploymentUrl: `https://${data.url}`,
       projectUrl: data.project?.url || null,
       error: null,
@@ -130,6 +134,7 @@ export async function deployToVercel(
   } catch (error) {
     return {
       success: false,
+      logs: [] as string[],
       deploymentUrl: null,
       projectUrl: null,
       error: error instanceof Error ? error.message : 'Deployment failed',
