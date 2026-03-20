@@ -109,7 +109,7 @@ export function DatabasePanel({ schema, isVisible }: { schema: string; isVisible
     if (!db) return
     
     const data = exportDatabase(db)
-    const blob = new Blob([data], { type: 'application/octet-stream' })
+    const blob = new Blob([data.buffer as ArrayBuffer], { type: "application/octet-stream" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
