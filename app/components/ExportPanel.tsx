@@ -16,7 +16,7 @@ import {
 import { cn } from '@/lib/utils'
 import { exportAsZip, downloadBlob } from '@/lib/export-service'
 import type { Project } from '@/types/project'
-import type { ExportFormat, ExportResult } from '@/types/export'
+import type { ExportFormat, ExportResult, ZipExportResult } from '@/types/export'
 
 interface ExportPanelProps {
   project: Project
@@ -56,7 +56,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
     setResult(null)
 
     try {
-      let exportResult: ExportResult
+      let exportResult: ExportResult | ZipExportResult
 
       switch (format) {
         case 'zip':
