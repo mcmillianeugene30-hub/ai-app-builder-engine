@@ -1,29 +1,21 @@
-import { authMiddleware, redirectToSignIn } from '@clerk/nextjs'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default authMiddleware({
-  publicRoutes: [
-    '/',
-    '/sign-in',
-    '/sign-up',
-    '/api/webhook',
-  ],
-  apiRoutes: [
-    '/api/projects',
-    '/api/projects/(.*)',
-    '/api/generate',
-    '/api/chat',
-    '/api/deploy',
-  ],
-  afterAuth(auth, req) {
-    // Handle users who aren't authenticated
-    if (!auth.userId && !auth.isPublicRoute) {
-      return redirectToSignIn({ returnBackUrl: req.url })
-    }
-  },
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/api/projects(.*)',
+  '/api/billing(.*)',
+  '/api/team(.*)'
+])
+
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect()
+  }
 })
 
 export const config = {
   matcher: [
-    '/((?!_next/image|_next/static|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    '/(api|trpc)(.*)',
   ],
 }
