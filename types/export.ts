@@ -17,6 +17,7 @@ export interface ExportOptions {
 export interface ExportResult {
   success: boolean
   url?: string
+  blob?: Blob
   downloadUrl?: string
   error?: string
   logs: string[]
