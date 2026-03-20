@@ -290,7 +290,7 @@ export function FileExplorer({
           </div>
         ) : filteredFiles.length === 0 ? (
           <div className="p-4 text-center">
-            <p className="text-xs text-zinc-500">No files match "{searchQuery}"</p>
+            <p className="text-xs text-zinc-500">No files match &quot;{searchQuery}&quot;</p>
           </div>
         ) : (
           fileTree.map(node => (
