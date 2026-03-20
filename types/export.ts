@@ -35,7 +35,7 @@ export interface VercelDeployResult {
   success: boolean
   deploymentUrl: string | null
   projectUrl: string | null
-  error: string | null
+  error?: string
 }
 
 export interface ZipExportResult {
@@ -43,7 +43,7 @@ export interface ZipExportResult {
   blob: Blob | null
   logs: string[]
   filename: string
-  error: string | null
+  error?: string
 }
 
 export interface ExportPanelProps {
