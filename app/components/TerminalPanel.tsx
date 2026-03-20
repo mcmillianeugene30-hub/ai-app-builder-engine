@@ -1,113 +1,88 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { Terminal as XTerm } from '@xterm/xterm'
+import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
-import { 
-  Terminal as TerminalIcon,
-  Trash2,
-  Copy,
-  Check,
-  Maximize2,
-  Minimize2
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { createTerminalSession, executeCommand } from '@/lib/terminal-service'
-import type { Project } from '@/types/project'
-import type { TerminalSession, CommandResult } from '@/types/terminal'
-
 import '@xterm/xterm/css/xterm.css'
+import { cn } from '@/lib/utils'
+import type { TerminalSession } from '@/types/terminal'
 
-export function TerminalPanel({ project, isVisible }: { project: Project | null; isVisible: boolean }) {
+interface TerminalPanelProps {
+  className?: string
+  projectId?: string
+}
+
+export function TerminalPanel({ className, projectId }: TerminalPanelProps) {
   const terminalRef = useRef<HTMLDivElement>(null)
-  const xtermRef = useRef<XTerm | null>(null)
+  const xtermRef = useRef<Terminal | null>(null)
   const fitAddonRef = useRef<FitAddon | null>(null)
-  const [session, setSession] = useState<TerminalSession | null>(null)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [copied, setCopied] = useState(false)
-  
+  const [isReady, setIsReady] = useState(false)
+  const [session, setSession] = useState<TerminalSession>({
+    id: 'local',
+    cwd: '/project',
+    history: [],
+    env: { PATH: '/usr/local/bin:/usr/bin:/bin' }
+  })
+
   // Initialize terminal
   useEffect(() => {
-    if (!isVisible || !terminalRef.current) return
-    
-    const term = new XTerm({
+    if (!terminalRef.current || xtermRef.current) return
+
+    const term = new Terminal({
       theme: {
-        background: '#18181b',
-        foreground: '#a1a1aa',
-        cursor: '#f59e0b',
-        selectionBackground: '#3f3f46',
-        black: '#18181b',
-        red: '#ef4444',
-        green: '#22c55e',
-        yellow: '#eab308',
-        blue: '#3b82f6',
-        magenta: '#a855f7',
-        cyan: '#06b6d4',
-        white: '#a1a1aa',
-        brightBlack: '#52525b',
-        brightRed: '#f87171',
-        brightGreen: '#4ade80',
-        brightYellow: '#facc15',
-        brightBlue: '#60a5fa',
-        brightMagenta: '#c084fc',
-        brightCyan: '#22d3ee',
-        brightWhite: '#f4f4f5',
+        background: '#0d1117',
+        foreground: '#e6edf3',
+        cursor: '#58a6ff',
+        selectionBackground: '#58a6ff40',
+        black: '#010409',
+        red: '#ff7b72',
+        green: '#3fb950',
+        yellow: '#d29922',
+        blue: '#58a6ff',
+        magenta: '#f778ba',
+        cyan: '#39c5cf',
+        white: '#e6edf3',
+        brightBlack: '#6e7681',
+        brightRed: '#ffa198',
+        brightGreen: '#56d364',
+        brightYellow: '#e3b341',
+        brightBlue: '#79c0ff',
+        brightMagenta: '#ff9bce',
+        brightCyan: '#56d4dd',
+        brightWhite: '#ffffff'
       },
-      fontFamily: 'JetBrains Mono, Menlo, Monaco, "Courier New", monospace',
+      fontFamily: 'JetBrains Mono, Fira Code, monospace',
       fontSize: 13,
+      lineHeight: 1.4,
       cursorBlink: true,
       cursorStyle: 'block',
       scrollback: 10000,
+      allowTransparency: true
     })
-    
+
     const fitAddon = new FitAddon()
     term.loadAddon(fitAddon)
-    
+
     term.open(terminalRef.current)
     fitAddon.fit()
-    
-    xtermRef.current = term
-    fitAddonRef.current = fitAddon
-    
-    // Create session
-    const newSession = createTerminalSession(project)
-    setSession(newSession)
-    
-    // Initial prompt
-    writePrompt(term, newSession)
-    
+
+    // Welcome message
+    term.writeln('\x1b[1;34m🚀 AI App Builder Terminal\x1b[0m')
+    term.writeln('\x1b[90mType \x1b[0m\x1b[32mhelp\x1b[0m\x1b[90m for available commands\x1b[0m')
+    term.writeln('')
+    term.write(`\x1b[32m➜\x1b[0m \x1b[34m${session.cwd}\x1b[0m `)
+
     // Handle input
     let currentLine = ''
-    
     term.onData((data) => {
       const code = data.charCodeAt(0)
-      
+
       // Enter key
       if (code === 13) {
-        term.write('\r\n')
-        
-        if (currentLine.trim()) {
-          executeCommand(currentLine, newSession).then((result) => {
-            if (result.output) {
-              // Handle clear command
-              if (result.output.includes('\x1b[2J')) {
-                term.clear()
-              } else {
-                const lines = result.output.split('\n')
-                lines.forEach((line, i) => {
-                  if (i > 0) term.write('\r\n')
-                  term.write(line)
-                })
-              }
-            }
-            term.write('\r\n')
-            writePrompt(term, newSession)
-          })
-        } else {
-          writePrompt(term, newSession)
-        }
-        
+        term.writeln('')
+        handleCommand(currentLine, term)
         currentLine = ''
+        term.write(`\x1b[32m➜\x1b[0m \x1b[34m${session.cwd}\x1b[0m `)
       }
       // Backspace
       else if (code === 127) {
@@ -118,99 +93,136 @@ export function TerminalPanel({ project, isVisible }: { project: Project | null;
       }
       // Ctrl+C
       else if (code === 3) {
-        term.write('^C\r\n')
+        term.writeln('')
+        term.write(`\x1b[32m➜\x1b[0m \x1b[34m${session.cwd}\x1b[0m `)
         currentLine = ''
-        writePrompt(term, newSession)
-      }
-      // Ctrl+L (clear)
-      else if (code === 12) {
-        term.clear()
-        writePrompt(term, newSession)
       }
       // Regular character
-      else if (code >= 32 && code !== 127) {
+      else if (code >= 32 && code <= 126) {
         currentLine += data
         term.write(data)
       }
     })
-    
-    // Handle resize
-    const handleResize = () => {
-      fitAddon.fit()
-    }
-    
-    window.addEventListener('resize', handleResize)
-    
+
+    xtermRef.current = term
+    fitAddonRef.current = fitAddon
+    setIsReady(true)
+
     return () => {
-      window.removeEventListener('resize', handleResize)
       term.dispose()
+      xtermRef.current = null
+      fitAddonRef.current = null
     }
-  }, [isVisible, project])
-  
-  const writePrompt = (term: XTerm, session: TerminalSession) => {
-    const prompt = `\x1b[32mdeveloper\x1b[0m:\x1b[34m${session.cwd}\x1b[0m$ `
-    term.write(prompt)
-  }
-  
-  const clearTerminal = () => {
-    xtermRef.current?.clear()
-  }
-  
-  const copyTerminal = () => {
-    const selection = xtermRef.current?.getSelection()
-    if (selection) {
-      navigator.clipboard.writeText(selection)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+  }, [])
+
+  // Handle resize
+  useEffect(() => {
+    const handleResize = () => {
+      fitAddonRef.current?.fit()
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const handleCommand = (cmd: string, term: Terminal) => {
+    const trimmed = cmd.trim()
+    
+    if (!trimmed) return
+
+    // Add to history
+    setSession(prev => ({
+      ...prev,
+      history: [...prev.history, trimmed]
+    }))
+
+    const [command, ...args] = trimmed.split(' ')
+
+    switch (command) {
+      case 'help':
+        term.writeln('\x1b[1mAvailable commands:\x1b[0m')
+        term.writeln('  \x1b[32mls\x1b[0m        List files')
+        term.writeln('  \x1b[32mcd\x1b[0m <dir>  Change directory')
+        term.writeln('  \x1b[32mpwd\x1b[0m       Print working directory')
+        term.writeln('  \x1b[32mcat\x1b[0m <file> Show file contents')
+        term.writeln('  \x1b[32mnpm\x1b[0m       Run npm commands')
+        term.writeln('  \x1b[32mgit\x1b[0m       Git operations')
+        term.writeln('  \x1b[32mclear\x1b[0m     Clear terminal')
+        term.writeln('  \x1b[32mhelp\x1b[0m      Show this help')
+        break
+
+      case 'clear':
+      case 'cls':
+        term.clear()
+        break
+
+      case 'ls':
+        term.writeln('\x1b[34mapp\x1b[0m/       \x1b[34mcomponents\x1b[0m/  \x1b[34mlib\x1b[0m/')
+        term.writeln('\x1b[34mnode_modules\x1b[0m/  \x1b[34mpublic\x1b[0m/  \x1b[34msupabase\x1b[0m/')
+        term.writeln('\x1b[32mpackage.json\x1b[0m  \x1b[32mtsconfig.json\x1b[0m  \x1b[32mREADME.md\x1b[0m')
+        break
+
+      case 'pwd':
+        term.writeln(session.cwd)
+        break
+
+      case 'cd':
+        if (args[0]) {
+          setSession(prev => ({ ...prev, cwd: args[0] }))
+          term.writeln(`Changed to ${args[0]}`)
+        }
+        break
+
+      case 'cat':
+        if (args[0]) {
+          term.writeln(`\x1b[90m// Contents of ${args[0]}\x1b[0m`)
+          term.writeln('\x1b[33m// File viewing not implemented in demo\x1b[0m')
+        } else {
+          term.writeln('\x1b[31mUsage: cat <filename>\x1b[0m')
+        }
+        break
+
+      case 'npm':
+        term.writeln(`\x1b[90m> npm ${args.join(' ')}\x1b[0m`)
+        term.writeln('\x1b[33m// npm operations would run here\x1b[0m')
+        break
+
+      case 'git':
+        term.writeln(`\x1b[90m> git ${args.join(' ')}\x1b[0m`)
+        term.writeln('\x1b[33m// git operations would run here\x1b[0m')
+        break
+
+      default:
+        term.writeln(`\x1b[31mCommand not found: ${command}\x1b[0m`)
+        term.writeln('Type \x1b[32mhelp\x1b[0m for available commands')
     }
   }
-  
-  if (!isVisible) return null
-  
+
   return (
-    <div className={cn(
-      'flex flex-col bg-zinc-950',
-      isFullscreen ? 'fixed inset-0 z-50' : 'h-full'
-    )}>
-      {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-800">
+    <div className={cn("flex flex-col h-full bg-[#0d1117] rounded-lg overflow-hidden", className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 bg-[#161b22] border-b border-[#30363d]">
         <div className="flex items-center gap-2">
-          <TerminalIcon className="w-4 h-4 text-zinc-400" />
-          <span className="text-sm text-zinc-300">Terminal</span>
-          <span className="text-xs text-zinc-600">|</span>
-          <span className="text-xs text-zinc-500">{session?.cwd}</span>
+          <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+          <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+          <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+          <span className="ml-2 text-sm text-gray-400">Terminal</span>
         </div>
-        <div className="flex items-center gap-1">
-          <button
-            onClick={copyTerminal}
-            className="p-1.5 text-zinc-500 hover:text-zinc-300"
-            title="Copy selection"
-          >
-            {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-          </button>
-          <button
-            onClick={clearTerminal}
-            className="p-1.5 text-zinc-500 hover:text-zinc-300"
-            title="Clear"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 text-zinc-500 hover:text-zinc-300"
-            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-          </button>
-        </div>
+        <span className="text-xs text-gray-500">
+          {session.cwd}
+        </span>
       </div>
-      
+
       {/* Terminal */}
-      <div 
-        ref={terminalRef} 
-        className="flex-1 p-2"
-        style={{ minHeight: '200px' }}
-      />
+      <div className="flex-1 p-2 overflow-hidden">
+        <div ref={terminalRef} className="h-full" />
+      </div>
+
+      {/* Status */}
+      <div className="px-3 py-1.5 bg-[#161b22] border-t border-[#30363d] text-xs text-gray-500 flex items-center justify-between">
+        <span>{isReady ? '● Connected' : '○ Connecting...'}</span>
+        <span>bash</span>
+      </div>
     </div>
   )
 }
