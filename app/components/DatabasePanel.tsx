@@ -249,10 +249,10 @@ export function DatabasePanel({ schema, isVisible }: { schema: string; isVisible
                   <tbody>
                     {tableSchema.map((row, i) => (
                       <tr key={i} className="border-b border-zinc-800">
-                        <td className="px-3 py-2 text-zinc-300 font-mono">{row[1]}</td>
-                        <td className="px-3 py-2 text-zinc-400">{row[2]}</td>
-                        <td className="px-3 py-2 text-zinc-400">{row[3] ? 'YES' : 'NO'}</td>
-                        <td className="px-3 py-2 text-zinc-400">{row[4] || '-'}</td>
+                        <td className="px-3 py-2 text-zinc-300 font-mono">{(row[1] as string)}</td>
+                        <td className="px-3 py-2 text-zinc-400">{(row[2] as string)}</td>
+                        <td className="px-3 py-2 text-zinc-400">{(row[3] ? "YES" : "NO")}</td>
+                        <td className="px-3 py-2 text-zinc-400">{(row[4] as string || "-")}</td>
                         <td className="px-3 py-2 text-zinc-400">{row[5] ? 'YES' : ''}</td>
                       </tr>
                     ))}
