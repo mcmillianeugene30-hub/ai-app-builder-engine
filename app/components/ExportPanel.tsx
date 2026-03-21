@@ -69,6 +69,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
         case 'vercel':
           // Vercel deployment would require OAuth or token
           exportResult = {
+            logs: [] as string[],
             success: true,
             message: 'Redirecting to Vercel...',
             url: `https://vercel.com/new?repository-url=${encodeURIComponent(`https://github.com/user/${project.name}`)}`
@@ -78,6 +79,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
 
         case 'github':
           exportResult = {
+            logs: [] as string[],
             success: true,
             message: 'GitHub integration coming soon',
             url: `https://github.com/new?repository_name=${encodeURIComponent(project.name)}`
