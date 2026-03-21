@@ -260,7 +260,7 @@ export default function Home() {
       case 'git':
         return (
           <GitPanel isVisible={true}
-            projectId={activeProject?.id}
+            project={activeProject}
             
           />
         )
