@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import type { TerminalSession } from '@/types/terminal'
 
 interface TerminalPanelProps {
+  isVisible: boolean
   className?: string
   projectId?: string
 }
