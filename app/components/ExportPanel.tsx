@@ -51,7 +51,10 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
   const [error, setError] = useState<string | null>(null)
 
   const handleExport = useCallback(async (format: ExportFormat) => {
-    setIsExporting(format)
+    if (!project) {
+      setError('No project selected')
+      return
+    }
     setError(null)
     setResult(null)
 
@@ -62,7 +65,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
         case 'zip':
           exportResult = await exportAsZip(project)
           if (exportResult.blob) {
-            downloadBlob(exportResult.blob, `${project.name}.zip`)
+            downloadBlob(exportResult.blob, `${project?.name}.zip`)
           }
           break
 
@@ -72,7 +75,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
             logs: [] as string[],
             success: true,
             message: 'Redirecting to Vercel...',
-            url: `https://vercel.com/new?repository-url=${encodeURIComponent(`https://github.com/user/${project.name}`)}`
+            url: `https://vercel.com/new?repository-url=${encodeURIComponent(`https://github.com/user/${project?.name}`)}`
           }
           window.open(exportResult.url!, '_blank')
           break
