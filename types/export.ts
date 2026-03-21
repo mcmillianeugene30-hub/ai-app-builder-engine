@@ -42,7 +42,7 @@ export interface VercelDeployResult {
 
 export interface ZipExportResult {
   success: boolean
-  blob: Blob | null
+  blob?: Blob
   logs: string[]
   message?: string
   filename: string

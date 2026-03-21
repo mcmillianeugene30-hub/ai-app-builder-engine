@@ -65,7 +65,7 @@ export async function exportAsZip(
     return {
       success: false,
       logs: [] as string[],
-      blob: null,
+      
       filename: `${project.name}.zip`,
       error: error instanceof Error ? error.message : 'Failed to create ZIP',
     }
