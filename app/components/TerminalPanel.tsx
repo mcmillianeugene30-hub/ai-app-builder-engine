@@ -21,7 +21,16 @@ export function TerminalPanel({ className, projectId }: TerminalPanelProps) {
     id: 'local',
     cwd: '/project',
     history: [],
-    env: { PATH: '/usr/local/bin:/usr/bin:/bin' }
+    env: { PATH: '/usr/local/bin:/usr/bin:/bin' },
+    fileSystem: {
+      root: {
+        name: '/',
+        type: 'directory',
+        children: new Map(),
+        createdAt: new Date(),
+        modifiedAt: new Date()
+      }
+    }
   })
 
   // Initialize terminal
