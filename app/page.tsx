@@ -251,7 +251,7 @@ export default function Home() {
       
       case 'database':
         return (
-          <DatabasePanel
+          <DatabasePanel isVisible={true}
             schema={databaseSchema}
             
           />
