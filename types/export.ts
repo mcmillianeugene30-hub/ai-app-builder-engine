@@ -52,5 +52,5 @@ export interface ZipExportResult {
 export interface ExportPanelProps {
   project: Project | null
   isVisible: boolean
-  onExport: (format: ExportFormat) => void
+  onExport?: (result: ExportResult) => void
 }
