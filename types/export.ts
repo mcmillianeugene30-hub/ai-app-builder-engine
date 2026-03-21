@@ -21,6 +21,7 @@ export interface ExportResult {
   downloadUrl?: string
   error?: string
   logs: string[]
+  message?: string
 }
 
 export interface VercelDeployConfig {
@@ -43,6 +44,7 @@ export interface ZipExportResult {
   success: boolean
   blob: Blob | null
   logs: string[]
+  message?: string
   filename: string
   error?: string
 }
