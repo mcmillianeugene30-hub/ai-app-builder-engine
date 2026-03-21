@@ -316,7 +316,7 @@ function ProjectCard({
       <div className="flex items-center gap-4 text-xs text-zinc-500 mt-4">
         <span className="flex items-center gap-1">
           <Layout className="w-3 h-3" />
-          {project.file_count || 0} files
+          {project.fileCount || 0} files
         </span>
         <span className="flex items-center gap-1">
           <Clock className="w-3 h-3" />
