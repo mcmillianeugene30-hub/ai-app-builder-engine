@@ -259,7 +259,7 @@ export default function Home() {
       
       case 'git':
         return (
-          <GitPanel
+          <GitPanel isVisible={true}
             project={activeProject}
             
           />
@@ -275,7 +275,7 @@ export default function Home() {
       
       case 'collaboration':
         return (
-          <CollaborationPanel
+          <CollaborationPanel isVisible={true}
             project={activeProject}
             
           />
@@ -294,7 +294,7 @@ export default function Home() {
       
       case 'history':
         return activeProject ? (
-          <HistoryPanel
+          <HistoryPanel isVisible={true}
             projectId={activeProject.id}
             currentFiles={activeProject.files}
             
@@ -305,7 +305,7 @@ export default function Home() {
       
       case 'terminal':
         return (
-          <TerminalPanel
+          <TerminalPanel isVisible={true}
             project={activeProject}
             
           />

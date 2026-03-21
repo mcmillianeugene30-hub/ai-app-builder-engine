@@ -34,6 +34,7 @@ export interface HistoryPanelProps {
   snapshots: VersionSnapshot[]
   currentSnapshotId: string | null
   isVisible: boolean
+  isVisible: boolean
   onCreateSnapshot: (name: string, description: string) => void
   onRestoreSnapshot: (snapshotId: string) => void
   onCompare: (snapshotId1: string, snapshotId2: string) => void

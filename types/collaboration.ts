@@ -57,5 +57,6 @@ export interface CollaborationPanelProps {
   peers: PeerInfo[]
   isConnected: boolean
   onInvite: () => void
+  isVisible: boolean
   onLeave: () => void
 }
