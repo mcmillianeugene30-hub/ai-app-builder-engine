@@ -320,8 +320,8 @@ function ProjectCard({
         </span>
         <span className="flex items-center gap-1">
           <Clock className="w-3 h-3" />
-          {project.updated_at 
-            ? formatDistanceToNow(new Date(project.updated_at), { addSuffix: true })
+          {project.updatedAt 
+            ? formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })
             : 'Recently'}
         </span>
       </div>
