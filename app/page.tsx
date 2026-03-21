@@ -242,7 +242,6 @@ export default function Home() {
             openFileIds={openFiles.map(f => f.id)}
             activeFileId={activeFileId}
             onSelectFile={openFile}
-            onFileClose={closeFile}
           />
         ) : (
           <div className="p-4 text-center text-zinc-500">
