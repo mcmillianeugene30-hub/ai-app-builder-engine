@@ -85,7 +85,7 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
             logs: [] as string[],
             success: true,
             message: 'GitHub integration coming soon',
-            url: `https://github.com/new?repository_name=${encodeURIComponent(project.name)}`
+            url: `https://github.com/new?repository_name=${encodeURIComponent(project?.name || "")}`
           }
           window.open(exportResult.url!, '_blank')
           break
@@ -175,18 +175,18 @@ export function ExportPanel({ project, onExport, className }: ExportPanelProps) 
       {/* File List Preview */}
       <div className="border-t border-gray-800 pt-4">
         <h4 className="text-xs font-medium text-gray-400 mb-2">
-          Files to Export ({project.files.length})
+          Files to Export ({project?.files?.length || 0})
         </h4>
         <div className="space-y-1 max-h-32 overflow-y-auto">
-          {project.files.slice(0, 10).map(file => (
+          {project?.files?.slice(0, 10).map(file => (
             <div key={file.id} className="flex items-center gap-2 text-xs text-gray-500">
               <FileCode className="w-3 h-3" />
               <span className="truncate">{file.path}</span>
             </div>
           ))}
-          {project.files.length > 10 && (
+          {project?.files?.length || 0 > 10 && (
             <p className="text-xs text-gray-600">
-              +{project.files.length - 10} more files...
+              +{project?.files?.length || 0 - 10} more files...
             </p>
           )}
         </div>
