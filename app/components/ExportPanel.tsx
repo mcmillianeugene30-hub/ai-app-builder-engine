@@ -19,7 +19,7 @@ import type { Project } from '@/types/project'
 import type { ExportFormat, ExportResult, ZipExportResult } from '@/types/export'
 
 interface ExportPanelProps {
-  project: Project
+  project: Project | null
   onExport?: (result: ExportResult) => void
   className?: string
 }
