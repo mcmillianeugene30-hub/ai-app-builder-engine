@@ -241,7 +241,7 @@ export default function Home() {
             files={activeProject.files}
             openFileIds={openFiles.map(f => f.id)}
             activeFileId={activeFileId}
-            onFileClick={openFile}
+            onSelectFile={openFile}
             onFileClose={closeFile}
           />
         ) : (
