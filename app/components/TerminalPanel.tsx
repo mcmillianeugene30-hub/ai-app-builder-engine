@@ -142,7 +142,7 @@ export function TerminalPanel({ className, projectId }: TerminalPanelProps) {
     // Add to history
     setSession(prev => ({
       ...prev,
-      history: [...prev.history, { command: trimmed, output: '' }]
+      history: [...prev.history, { command: trimmed, output: '', timestamp: new Date(), exitCode: 0 }]
     }))
 
     const [command, ...args] = trimmed.split(' ')
