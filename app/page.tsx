@@ -253,7 +253,7 @@ export default function Home() {
         return (
           <DatabasePanel
             schema={databaseSchema}
-            isVisible={true}
+            
           />
         )
       
@@ -261,7 +261,7 @@ export default function Home() {
         return (
           <GitPanel
             project={activeProject}
-            isVisible={true}
+            
           />
         )
       
@@ -269,7 +269,7 @@ export default function Home() {
         return (
           <ExportPanel
             project={activeProject}
-            isVisible={true}
+            
           />
         )
       
@@ -277,7 +277,7 @@ export default function Home() {
         return (
           <CollaborationPanel
             project={activeProject}
-            isVisible={true}
+            
           />
         )
       
@@ -287,7 +287,7 @@ export default function Home() {
             project={activeProject}
             currentFile={activeFile}
             openFiles={openFiles}
-            isVisible={true}
+            
             onRequestEdit={handleChatEdit}
           />
         )
@@ -297,7 +297,7 @@ export default function Home() {
           <HistoryPanel
             projectId={activeProject.id}
             currentFiles={activeProject.files}
-            isVisible={true}
+            
             onRestore={(files) => updateProjectFiles(files)}
             onFilesChange={() => {}}
           />
@@ -307,7 +307,7 @@ export default function Home() {
         return (
           <TerminalPanel
             project={activeProject}
-            isVisible={true}
+            
           />
         )
       
@@ -567,7 +567,7 @@ export default function Home() {
               <PreviewWindow
                 files={previewableFiles}
                 activeFileId={activeFileId}
-                isVisible={true}
+                
                 onError={(error) => console.error('Preview error:', error)}
                 onLoad={() => {}}
               />
