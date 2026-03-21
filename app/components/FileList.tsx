@@ -13,7 +13,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState, useMemo, useCallback } from 'react'
-import type { FileListProps, ProjectFile } from '@/types/editor'
+import type { FileListProps } from '@/types/editor'
+import type { ProjectFile } from '@/types/project'
 
 interface FileNode {
   id: string
