@@ -260,7 +260,7 @@ export default function Home() {
       case 'git':
         return (
           <GitPanel isVisible={true}
-            project={activeProject}
+            projectId={activeProject?.id}
             
           />
         )
@@ -268,7 +268,7 @@ export default function Home() {
       case 'export':
         return (
           <ExportPanel
-            project={activeProject}
+            projectId={activeProject?.id}
             
           />
         )
@@ -276,7 +276,7 @@ export default function Home() {
       case 'collaboration':
         return (
           <CollaborationPanel isVisible={true}
-            project={activeProject}
+            projectId={activeProject?.id}
             
           />
         )
@@ -285,7 +285,7 @@ export default function Home() {
         return (
           <ChatPanel
             isVisible={true}
-            project={activeProject}
+            projectId={activeProject?.id}
             currentFile={activeFile}
             openFiles={openFiles}
             
@@ -307,7 +307,7 @@ export default function Home() {
       case 'terminal':
         return (
           <TerminalPanel isVisible={true}
-            project={activeProject}
+            projectId={activeProject?.id}
             
           />
         )
