@@ -284,6 +284,7 @@ export default function Home() {
       case 'chat':
         return (
           <ChatPanel
+            isVisible={true}
             project={activeProject}
             currentFile={activeFile}
             openFiles={openFiles}
